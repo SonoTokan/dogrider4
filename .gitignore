@@ -8,4 +8,6 @@ data/
 *.tsbuildinfo
 .env*
 !.env.example
+public/assets/aistudio/
+
 
