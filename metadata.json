@@ -1,0 +1,6 @@
+{
+  "name": "大狗骑自行车4",
+  "description": "《大狗骑自行车4》— 多人实时对抗与合作越野自行车竞速游戏，包含头朝地摔车血量系统、骑手与单车升级、动态天气、赛道陷阱与全球实时排行榜。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
