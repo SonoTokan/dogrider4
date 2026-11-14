@@ -129,7 +129,7 @@ export function createInitialRacerState(params: {
     frameId: params.frameId,
     upgrades: params.upgrades,
     x: 180 + (params.startOffset || 0),
-    y: 380,
+    y: 402,
     vx: 0,
     vy: 0,
     angle: 0,
@@ -335,8 +335,9 @@ export function stepRacerPhysics(
   const slope = getTerrainSlope(racer.x, trackId, seed);
   const bikeClearance = 18;
   const prevGrounded = racer.grounded;
+  const groundSnapTol = prevGrounded && !inputs.jump && racer.vy >= -45 ? 10 : 0;
 
-  if (racer.y >= groundY - bikeClearance) {
+  if (racer.y >= groundY - bikeClearance - groundSnapTol) {
     const impactVy = racer.vy;
     racer.y = groundY - bikeClearance;
     racer.grounded = true;
@@ -445,8 +446,9 @@ export function stepRacerPhysics(
         const boostMult = racer.nitroActive ? 1.48 : 1.0;
         const mudCap = racer.mudTimer > 0 ? 0.52 : 1.0;
         const targetV = maxSpeed * boostMult * mudCap;
+        const launchAccel = racer.vx < 220 ? Math.max(accel, 950) : accel;
         if (racer.vx < targetV) {
-          racer.vx += accel * boostMult * dt;
+          racer.vx = Math.min(targetV, racer.vx + launchAccel * boostMult * dt);
         }
         // Dust trail
         if (Math.random() < 0.45 && racer.vx > 180) {
@@ -507,6 +509,8 @@ export function stepRacerPhysics(
     if (racer.nitroActive) {
       racer.vx += Math.cos(racer.angle) * 420 * dt;
       racer.vy += Math.sin(racer.angle) * 260 * dt;
+    } else if (inputs.throttle && racer.vx < maxSpeed * 0.65) {
+      racer.vx += accel * 0.25 * dt;
     }
 
     const airSpinTorque = 5.4 * rider.airControlBonus * balanceMult * diffSpec.airControlMult;

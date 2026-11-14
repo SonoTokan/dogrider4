@@ -387,44 +387,68 @@ export const GamePlayView: React.FC<GamePlayViewProps> = ({
       document.activeElement.blur();
     }
 
+    const isControlKey = (e: KeyboardEvent) => {
+      const c = e.code;
+      const k = (e.key || '').toLowerCase();
+      const kc = e.keyCode;
+      return (
+        c === 'KeyW' || c === 'KeyS' || c === 'KeyA' || c === 'KeyD' ||
+        c === 'KeyQ' || c === 'KeyE' || c === 'KeyF' || c === 'KeyR' ||
+        c === 'KeyT' || c === 'Space' ||
+        c === 'ArrowUp' || c === 'ArrowDown' || c === 'ArrowLeft' || c === 'ArrowRight' ||
+        k === 'w' || k === 's' || k === 'a' || k === 'd' ||
+        k === 'q' || k === 'e' || k === 'f' || k === 'r' || k === 't' ||
+        kc === 87 || kc === 83 || kc === 65 || kc === 68 ||
+        kc === 81 || kc === 69 || kc === 70 || kc === 82 || kc === 84 ||
+        kc === 38 || kc === 40 || kc === 37 || kc === 39 || kc === 32
+      );
+    };
+
     const onKeyDown = (e: KeyboardEvent) => {
       soundEngine.unlock();
+      const activeEl = document.activeElement;
       if (
-        ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)
+        activeEl instanceof HTMLElement &&
+        activeEl.tagName !== 'INPUT' &&
+        activeEl.tagName !== 'TEXTAREA'
       ) {
+        activeEl.blur();
+      }
+      if (isControlKey(e)) {
         e.preventDefault();
       }
-      const k = e.key.toLowerCase();
+      const k = (e.key || '').toLowerCase();
       const c = e.code;
-      if (c === 'KeyW' || c === 'ArrowUp' || k === 'w' || e.key === 'ArrowUp') {
+      const kc = e.keyCode;
+      if (c === 'KeyW' || c === 'ArrowUp' || k === 'w' || e.key === 'ArrowUp' || kc === 87 || kc === 38) {
         inputsRef.current.throttle = true;
       }
-      if (c === 'KeyS' || c === 'ArrowDown' || k === 's' || e.key === 'ArrowDown') {
+      if (c === 'KeyS' || c === 'ArrowDown' || k === 's' || e.key === 'ArrowDown' || kc === 83 || kc === 40) {
         inputsRef.current.brake = true;
       }
-      if (c === 'KeyA' || c === 'ArrowLeft' || k === 'a' || e.key === 'ArrowLeft') {
+      if (c === 'KeyA' || c === 'ArrowLeft' || k === 'a' || e.key === 'ArrowLeft' || kc === 65 || kc === 37) {
         inputsRef.current.leanLeft = true;
       }
-      if (c === 'KeyD' || c === 'ArrowRight' || k === 'd' || e.key === 'ArrowRight') {
+      if (c === 'KeyD' || c === 'ArrowRight' || k === 'd' || e.key === 'ArrowRight' || kc === 68 || kc === 39) {
         inputsRef.current.leanRight = true;
       }
-      if (c === 'KeyQ' || k === 'q') {
+      if (c === 'KeyQ' || k === 'q' || kc === 81) {
         inputsRef.current.jump = true;
       }
-      if (c === 'ShiftLeft' || c === 'ShiftRight' || e.key === 'Shift') {
+      if (c === 'ShiftLeft' || c === 'ShiftRight' || e.key === 'Shift' || kc === 16) {
         inputsRef.current.nitro = true;
       }
-      if (c === 'KeyE' || k === 'e') {
+      if (c === 'KeyE' || k === 'e' || kc === 69) {
         inputsRef.current.bark = true;
       }
-      if (c === 'KeyF' || k === 'f') {
+      if (c === 'KeyF' || k === 'f' || kc === 70) {
         fireWeapon();
       }
-      if (c === 'KeyR' || k === 'r') {
+      if (c === 'KeyR' || k === 'r' || kc === 82) {
         cycleWeapon();
       }
       if (mode === 'versus') {
-        if (c === 'KeyT' || k === 't') {
+        if (c === 'KeyT' || k === 't' || kc === 84) {
           setTauntWheelOpen((v) => !v);
         }
         const digitIdx = ['1', '2', '3', '4', '5', '6'].indexOf(k);
@@ -439,21 +463,22 @@ export const GamePlayView: React.FC<GamePlayViewProps> = ({
     };
 
     const onKeyUp = (e: KeyboardEvent) => {
-      const k = e.key.toLowerCase();
+      const k = (e.key || '').toLowerCase();
       const c = e.code;
-      if (c === 'KeyW' || c === 'ArrowUp' || k === 'w' || e.key === 'ArrowUp') {
+      const kc = e.keyCode;
+      if (c === 'KeyW' || c === 'ArrowUp' || k === 'w' || e.key === 'ArrowUp' || kc === 87 || kc === 38) {
         inputsRef.current.throttle = false;
       }
-      if (c === 'KeyS' || c === 'ArrowDown' || k === 's' || e.key === 'ArrowDown') {
+      if (c === 'KeyS' || c === 'ArrowDown' || k === 's' || e.key === 'ArrowDown' || kc === 83 || kc === 40) {
         inputsRef.current.brake = false;
       }
-      if (c === 'KeyA' || c === 'ArrowLeft' || k === 'a' || e.key === 'ArrowLeft') {
+      if (c === 'KeyA' || c === 'ArrowLeft' || k === 'a' || e.key === 'ArrowLeft' || kc === 65 || kc === 37) {
         inputsRef.current.leanLeft = false;
       }
-      if (c === 'KeyD' || c === 'ArrowRight' || k === 'd' || e.key === 'ArrowRight') {
+      if (c === 'KeyD' || c === 'ArrowRight' || k === 'd' || e.key === 'ArrowRight' || kc === 68 || kc === 39) {
         inputsRef.current.leanRight = false;
       }
-      if (c === 'ShiftLeft' || c === 'ShiftRight' || e.key === 'Shift') {
+      if (c === 'ShiftLeft' || c === 'ShiftRight' || e.key === 'Shift' || kc === 16) {
         inputsRef.current.nitro = false;
       }
     };
@@ -470,12 +495,12 @@ export const GamePlayView: React.FC<GamePlayViewProps> = ({
       };
     };
 
-    window.addEventListener('keydown', onKeyDown);
-    window.addEventListener('keyup', onKeyUp);
+    window.addEventListener('keydown', onKeyDown, { capture: true });
+    window.addEventListener('keyup', onKeyUp, { capture: true });
     window.addEventListener('blur', onBlur);
     return () => {
-      window.removeEventListener('keydown', onKeyDown);
-      window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener('keydown', onKeyDown, { capture: true });
+      window.removeEventListener('keyup', onKeyUp, { capture: true });
       window.removeEventListener('blur', onBlur);
     };
   }, [mode, profile.playerId, profile.nickname]);
@@ -508,6 +533,7 @@ export const GamePlayView: React.FC<GamePlayViewProps> = ({
       frameId: profile.selectedFrame,
       upgrades: profile.upgrades,
     });
+    localRacer.y = getTerrainHeight(localRacer.x, trackId, seed) - 18;
     localRacerRef.current = localRacer;
 
     // Host manages AI Bots in multiplayer rooms OR solo Terminator spawns 3 AI targets
